@@ -16,7 +16,9 @@ import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import KloudqTechnologies.JDBCConnection.ConnectJDBC;
 import KloudqTechnologies.PageObjects.DashboardShield;
 import KloudqTechnologies.TestComponents.BaseTest;
-
+import org.testng.annotations.Optional;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Parameters;
 public class AdminTestShield  {
 
 	ExtentTest logger;
@@ -31,22 +33,47 @@ public class AdminTestShield  {
 		this.report.attachReporter(extent);
 
 	}
-
-	@Test(groups= {"Admin"},priority = 1)  
-	public void Login() throws IOException, InterruptedException  
+	@BeforeTest
+	@Parameters("groupNames")
+	public void ToSetUPTest(@Optional String groupNames)
+	{
+		
+		        // Retrieve parameter value from TestNG XML
+		//groupNames = context.getCurrentXmlTest().getParameter("groupNames");
+		 //       System.out.println("Parameter value: " + groupNames);
+		  
+		        if (groupNames != null && !groupNames.isEmpty()) {
+		            String[] groupsArray = groupNames.split(",");
+		            for (String group : groupsArray) {
+		                System.out.println("Running test in group: " + group.trim());
+		                // Perform actions or setup specific to each group
+		            }
+		        } else {
+		            System.out.println("No specific groups provided. Running default test.");
+		            // Run default test or perform default actions
+		        }
+		        
+	
+	}
+	@Test(groups= {"All,Dashboard"},priority = 1) 
+	 @Parameters({"companyName","userType"})
+	public void Login( @Optional String companyName, String userType) throws IOException, InterruptedException
 	{  
 
-		System.out.println("Execute Login Component");
-
-		LoginTestExcel lte=new LoginTestExcel();
-
-		lte.getAdminUserDataShield(this.report);
-
-		Thread.sleep(5000);
-
+		System.out.println("Started Executing Login Component");
+		LoginTestExcel AdminTestShield=new LoginTestExcel();
+		AdminTestShield.getDataByCompanyName(this.report,companyName,userType);
+		 System.out.println("CompanyName:-> " + companyName);
+		 System.out.println("UserType:->" + userType);
+		
+		
+		
+		//lte.getDataByCompanyName(this.report);
+		Thread.sleep(4000);
+		
 	}  
 
-	@Test(groups= {"Admin"},priority = 2)  
+	@Test(groups= {"All,Admin"},priority = 2)  
 	public void Dashboard() throws SQLException, FileNotFoundException, IOException, InterruptedException  
 	{  
 
