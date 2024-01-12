@@ -220,6 +220,91 @@ public class LoginTestExcel  extends BaseTest {
 		return url;
 
 	}
+	public  String getDataByCompanyName(ExtentReports report,String companyName,String userType) throws IOException, InterruptedException  
+	{
+		
+
+        try {
+        	
+        	
+
+        	File excelFile=new File("./src/main/java/KloudqTechnologies/tests/resources/Test.xlsx");
+    		System.out.println(excelFile.exists());
+    		FileInputStream fis=new FileInputStream(excelFile);
+    		XSSFWorkbook workbook=new XSSFWorkbook(fis);
+    		XSSFSheet sheet=workbook.getSheet("Sheet2");
+    		
+            int companyIdIndex = -1;
+            int userTypeIndex = -1;
+            int userIdIndex = -1;
+            int passwordIndex = -1;
+            int urlIndex=-1;
+
+            // Find column indexes for "Company", "UserType", "UserID", and "Password"
+            Row headerRow = sheet.getRow(0);
+            for (int i = 0; i < headerRow.getPhysicalNumberOfCells(); i++) {
+                Cell cell = headerRow.getCell(i);
+                String header = cell.getStringCellValue().trim();
+                if (header.equalsIgnoreCase("company")) {
+                    companyIdIndex = i;
+                } else if (header.equalsIgnoreCase("usertype")) {
+                    userTypeIndex = i;
+                } else if (header.equalsIgnoreCase("Username")) {
+                    userIdIndex = i;
+                } else if (header.equalsIgnoreCase("Password")) {
+                    passwordIndex = i;
+                }
+                else if (header.equalsIgnoreCase("url")) {
+                	urlIndex = i;
+                }
+            }
+
+            if (companyIdIndex != -1 && userTypeIndex != -1 && userIdIndex != -1 && passwordIndex != -1) {
+                // Iterate through rows and fetch UserID and Password based on Company Name and UserType
+                for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                    Row row = sheet.getRow(rowIndex);
+
+                    Cell companyCell = row.getCell(companyIdIndex);
+                    Cell userTypeCell = row.getCell(userTypeIndex);
+
+                    if (companyCell != null && userTypeCell != null) {
+                        String company = companyCell.getStringCellValue().trim();
+                        String type = userTypeCell.getStringCellValue().trim();
+
+                        if (company.equalsIgnoreCase(companyName) && type.equalsIgnoreCase(userType)) {
+                            Cell userIdCell = row.getCell(userIdIndex);
+                            Cell passwordCell = row.getCell(passwordIndex);
+                            Cell urlCell=row.getCell(urlIndex);
+                            String userId = userIdCell.getStringCellValue();
+                            String password = passwordCell.getStringCellValue();
+                            String url=urlCell.getStringCellValue();
+                            
+                            Login login=launchApplication(url);
+
+                    		login.loginApplication(userId,password,report);
+                    		logger=report.createTest("Check -> Login to Shield");
+                    		logger.info("Starting Automation Application");
+                    		logger.pass("Login Success to Shield");
+                            System.out.println("UserID: " + userId + ", Password: " + password + ", URL: "+url);
+                            // You can use the retrieved UserID and Password as needed
+                            
+                            
+                            
+                        }
+                    }
+                }
+            } else {
+                System.out.println("Required headers not found.");
+            }
+
+
+           
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		return companyName;
+		
+	}
 
 	
 	
