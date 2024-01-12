@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite  name="ShieldSuite">
-<test name="Admin Test">  
-<classes>  
-<class name="KloudqTechnologies.tests.AdminTestShield"/>  
-</classes>  
-</test> 
-</suite> 
+<test name="Shield Sanity">
+        <parameter name="companyName" value="Shield" />
+        <parameter name="userType" value="lenzadmin" />
+        <parameter name="groupNames" value="All" />
+        
+        <classes>
+            <class name="KloudqTechnologiestests.AdminTestShield" />
+          
+            <!-- Add more classes here if needed -->
+        </classes>
+    </test>
